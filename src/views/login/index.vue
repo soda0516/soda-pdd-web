@@ -2,7 +2,7 @@
     <div class="login-container">
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
         <div class="title-container">
-          <h3 class="title">登录系统</h3>
+          <h3 class="title">大橙助手</h3>
         </div>
         <el-form-item prop="username">
         <span class="svg-container">
@@ -41,10 +41,10 @@
       </el-form>
       <el-form style="margin-left:10px; text-align: center" :inline="true">
         <el-form-item>
-          <el-button :loading="loading" type="danger" style="width:215px" @click.native.prevent="shopAuth">店铺授权</el-button>
+          <el-button :loading="loading" type="danger" style="width:215px" @click.native.prevent="shopAuth">打开授权页面</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button :loading="loading" type="primary" style="width:215px" @click.native.prevent="handleLogin">用户登录</el-button>
+          <el-button :loading="loading" type="primary" style="width:215px" @click.native.prevent="handleLogin">用户名密码登录</el-button>
         </el-form-item>
       </el-form>
         <el-dialog :visible.sync="dialogVisible" >
@@ -163,6 +163,8 @@ export default {
         if (valid) {
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              window.localStorage.setItem('username', this.loginForm.username)
+              window.localStorage.setItem('password', this.loginForm.password)
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             }).catch(() => {
@@ -190,7 +192,20 @@ export default {
       })
     },
     shopAuth() {
-      window.location.href = 'http://htpdd.pjzbz.cn/api/user-access-token/index'
+      if (window.client !== undefined && window.client === 1) {
+        if (this.$store.getters.userInfo) {
+          var info = JSON.parse(this.$store.getters.userInfo)
+          window.mallInfo.openAuthUrl(info.id)
+        } else {
+          window.mallInfo.openAuthUrl(0)
+        }
+      } else {
+        window.location.href = 'https://www.dckeji.tech/api/user-access-token/index?id=0'
+      }
+      // /code-state-add
+      // console.log('shopAuth')
+      // window.location.href = 'https://www.dckeji.tech/api/user-access-token/index?id=0'
+      // window.location.href = 'http://127.0.0.1:7008' + '/user-access-token/index'
     }
   }
 }

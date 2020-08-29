@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import LayoutHome from '@/layout-home'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -50,12 +51,21 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: function() {
+      // if (window.client === undefined || window.client !== 1) {
+      //   console.log('window.client === undefined || window.client !== 1')
+      //   return '/welcome'
+      // } else {
+      //   console.log('aaaaaaaaaawindow.client === undefined || window.client !== 1')
+      //   return '/dashboard'
+      // }
+      return '/dashboard'
+    },
     children: [{
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '辽宁虹天', icon: 'dashboard' }
+      meta: { title: '大橙助手', icon: 'dashboard' }
     },
     {
       path: '/callback',
@@ -74,7 +84,7 @@ export const constantRoutes = [
         path: '/mall-operation',
         name: 'MallOperation',
         component: () => import('@/views/goods/mall-operation.vue'),
-        meta: { title: '店铺登陆', icon: 'form' }
+        meta: { title: '店铺管理', icon: 'form' }
       }]
   },
   {
@@ -88,38 +98,44 @@ export const constantRoutes = [
         path: '/fast-on-off-sale',
         name: 'FastOnOffSale',
         component: () => import('@/views/goods/fast/fast-on-off-sale.vue'),
-        meta: { title: '急速操作', icon: 'form' }
+        meta: { title: '急速上下架', icon: 'form' }
       },
       {
-        path: '/scheduler-on-off-sale',
-        name: 'SchedulerOnOffSale',
-        component: () => import('@/views/goods/scheduler/scheduler-on-off-sale.vue'),
-        meta: { title: '定时操作', icon: 'form' }
-      },
-      {
-        path: '/noflow-off-shelve',
-        name: 'NoflowOffShelve',
-        component: () => import('@/views/goods/noflow/noflow-off-shelve.vue'),
-        meta: { title: '流量操作', icon: 'form' }
+        path: '/circle-on-off-sale',
+        name: 'CircleOnOffSale',
+        component: () => import('@/views/goods/circle/circle-on-off-sale.vue'),
+        meta: { title: '循环上下架', icon: 'form' }
       }
       // {
-      //   path: '/circle-on-off-sale',
-      //   name: 'CircleOnOffSale',
-      //   component: () => import('@/views/goods/circle/circle-on-off-sale.vue'),
-      //   meta: { title: '循环操作', icon: 'form' }
+      //   path: '/scheduler-on-off-sale',
+      //   name: 'SchedulerOnOffSale',
+      //   component: () => import('@/views/goods/scheduler/scheduler-on-off-sale.vue'),
+      //   meta: { title: '定时上下架', icon: 'form' }
       // }
     ]
   },
   {
     path: '/goods',
     component: Layout,
-    meta: { title: '商品管理', icon: 'example' },
+    meta: { title: '商品清除', icon: 'example' },
     children: [
       {
-        path: '/delete-goods',
-        name: 'DeleteGoods',
-        component: () => import('@/views/goods/task/delete-goods.vue'),
-        meta: { title: '商品删除', icon: 'form' }
+        path: '/offsale-clean',
+        name: 'OffsaleClean',
+        component: () => import('@/views/goods/offsale-clean/offsale-clean.vue'),
+        meta: { title: '下架品清理', icon: 'form' }
+      },
+      {
+        path: '/draft-clean',
+        name: 'DraftClean',
+        component: () => import('@/views/goods/draft-clean/draft-clean.vue'),
+        meta: { title: '草稿箱管理', icon: 'form' }
+      },
+      {
+        path: '/no-order-clean',
+        name: 'noOrderClean',
+        component: () => import('@/views/order/no-order-clean.vue'),
+        meta: { title: '无流量清理', icon: 'form' }
       }
     ]
   },
@@ -132,14 +148,14 @@ export const constantRoutes = [
         path: '/taobao-pinduoduo-goods-copy',
         name: 'TaobaoPinduoduoGoodsCopy',
         component: () => import('@/views/copy/taobao-pinduoduo-goods-copy.vue'),
-        meta: { title: '商品上传', icon: 'form' }
-      },
-      {
-        path: '/forbidden-word-manage',
-        name: 'ForbiddenWordManage',
-        component: () => import('@/views/copy/forbidden-word-manage.vue'),
-        meta: { title: '禁词管理', icon: 'form' }
+        meta: { title: '淘宝上货', icon: 'form' }
       }
+      // {
+      //   path: '/forbidden-word-manage',
+      //   name: 'ForbiddenWordManage',
+      //   component: () => import('@/views/copy/forbidden-word-manage.vue'),
+      //   meta: { title: '禁词管理', icon: 'form' }
+      // }
     ]
   },
   {
@@ -152,13 +168,19 @@ export const constantRoutes = [
         name: 'AccountModify',
         component: () => import('@/views/system/account-modify.vue'),
         meta: { title: '账户修改', icon: 'form' }
-      },
-      {
-        path: '/mall-delete',
-        name: 'MallDelete',
-        component: () => import('@/views/system/mall-delete.vue'),
-        meta: { title: '店铺删除', icon: 'form' }
       }
+      // {
+      //   path: '/mall-delete',
+      //   name: 'MallDelete',
+      //   component: () => import('@/views/system/mall-delete.vue'),
+      //   meta: { title: '店铺删除', icon: 'form' }
+      // },
+      // {
+      //   path: '/mall-delete',
+      //   name: 'MallDelete',
+      //   component: () => import('@/views/system/mall-delete.vue'),
+      //   meta: { title: '任务日志', icon: 'form' }
+      // }
     ]
   },
   {
@@ -171,6 +193,20 @@ export const constantRoutes = [
         name: 'ContactUs',
         component: () => import('@/views/contact/contact-us.vue'),
         meta: { title: '客服信息', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/home',
+    // meta: { title: '联系我们', icon: 'example' },
+    // hidden: true,
+    component: LayoutHome,
+    children: [
+      {
+        path: '/welcome',
+        name: 'Welcome',
+        component: () => import('@/views/home.vue')
+        // meta: { title: '客服信息', icon: 'form' }
       }
     ]
   }

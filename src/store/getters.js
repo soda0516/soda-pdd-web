@@ -8,8 +8,15 @@ const getters = {
   avatar: state => state.user.avatar,
   name: state => state.user.name,
   introduction: state => state.user.introduction,
+  userInfo: state => state.user.userInfo,
   roles: state => state.user.roles,
   permission_routes: state => state.permission.routes,
-  errorLogs: state => state.errorLog.logs
+  currentOnOffSaleTask: state => state.task.onOffSaleTask,
+  currentCircleOnOffSaleTask: state => state.task.circleOnOffSaleTask,
+  currentDeleteGoodsTask: state => state.task.deleteGoodsTask,
+  noflowGoodsList: state => state.task.noflowGoodsListAll,
+  currentNoflowGoodsList: state => state.task.currentNoflowGoodsListPage
 }
 export default getters
+// status: '',
+//   process: 0

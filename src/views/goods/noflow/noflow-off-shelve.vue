@@ -193,8 +193,10 @@ export default {
         })
     },
     setupNoFlowTool() {
+      // var explorer = window.navigator.userAgent.toLowerCase()
+      // alert(explorer)
       // eslint-disable-next-line no-undef
-      javaNoFlowTool.start('hahaha')
+      // javaNoFlowTool.start('hahaha')
     }
   }
 }

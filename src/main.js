@@ -2,10 +2,10 @@ import Vue from 'vue'
 // import VueSocketIO from 'vue-socket.io'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
-
+import Global from '@/global_variable'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/styles/index.scss' // global css
 
@@ -15,6 +15,8 @@ import router from './router'
 import request from './utils/request'
 import utils from './utils/index'
 import axios from 'axios'
+// import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+import VueI18n from 'vue-i18n'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -34,13 +36,32 @@ if (process.env.NODE_ENV === 'production') {
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+// Vue.use(ElementUI, { zhLocale })
 // Vue.use(new VueSocketIO({
 //   debug: true,
 //   connection: 'ws://localhost:7008/websocket/'
 // }))
+// eslint-disable-next-line no-undef
+// Vue.use(VueI18n)
+// const i18n = new VueI18n({
+//   // eslint-disable-next-line no-undef
+//   locale: lang,
+//   // locale: sessionStorage.getItem('language')||'en',
+//   messages: {
+//     // eslint-disable-next-line no-undef
+//     'en': Object.assign(require('./lang/en.json'), enLocale), // 将我们项目中的语言包与Element的语言包进行合并
+//     'zh': Object.assign(require('./lang/zh.json'), zhLocale),
+//     // eslint-disable-next-line no-undef
+//     'es': Object.assign(require('./lang/es.json'), esLocale)
+//   }
+// })
+// Vue.use(ElementUI, {
+//   i18n: (key, value) => i18n.t(key, value) // 重点！！在注册Element时设置i18n的处理方法（这里有个小坑）
+// })
 Vue.prototype.$request = request
 Vue.prototype.$axios = axios
 Vue.prototype.$utils = utils
+Vue.prototype.$global = Global
 
 Vue.config.productionTip = false
 

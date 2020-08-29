@@ -26,15 +26,14 @@ router.beforeEach(async(to, from, next) => {
   // NProgress.done()
   if (hasToken) {
     if (to.path === '/login') {
-      // if is logged in, redirect to the home page
       next({ path: '/' })
+      // if is logged in, redirect to the home page
       NProgress.done()
     } else {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       // console.log(store.getters.name)
       // const hasGetUserInfo = getToken()
       if (hasRoles) {
-        console.log('hasRoles++hasToken进入beforeEach')
         next()
       } else {
         try {

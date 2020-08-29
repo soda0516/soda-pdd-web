@@ -1,16 +1,6 @@
 <template>
   <div id="app">
     <router-view></router-view>
-<!--    <float-icons padding="10 30 10 10" class="icons-warp">-->
-<!--      <div class="float-icon-item">-->
-<!--        <img src="icons/svg/example.svg" alt="" @click="handleIcons('home')">-->
-<!--        <span>首页</span>-->
-<!--      </div>-->
-<!--      <div class="float-icon-item">-->
-<!--        <img src="icons/svg/example.svg" alt="" @click="handleIcons('cart')">-->
-<!--        <span>购物车</span>-->
-<!--      </div>-->
-<!--    </float-icons>-->
   </div>
 </template>
 
@@ -19,11 +9,11 @@ import { getToken } from './utils/auth'
 import FloatIcons from '@/components/s-icons'
 
 export default {
+  name: 'App',
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    'float-icons': FloatIcons
+    // 'float-icons': FloatIcons
   },
-  name: 'App',
   data() {
     return {
       src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
@@ -31,11 +21,13 @@ export default {
       timeout: 28 * 1000, // 30秒一次心跳
       timeoutObj: null, // 心跳心跳倒计时
       serverTimeoutObj: null, // 心跳倒计时
-      timeoutnum: null// 断开 重连倒计时
+      timeoutnum: null, // 断开 重连倒计时,
+      currentWanchengdu: 0
     }
   },
   mounted() {
-    this.initWebSokect()
+    this.$store.dispatch('task/setStatus', 0)
+    // this.initWebSokect()
   },
   destroyed() {
     this.websock.close()

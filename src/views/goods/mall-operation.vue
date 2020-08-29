@@ -7,7 +7,8 @@
       element-loading-spinner="el-icon-loading"
     >
       <el-divider content-position="left">
-        <el-button type="danger" @click="submitAuth">店铺登陆</el-button>
+<!--        <el-button type="danger" @click="tabToHome">切换到隐藏也看看</el-button>-->
+        <el-button type="danger" @click="submitAuth">重新授权更新秘钥</el-button>
         <el-button type="warning" @click="updateMallInfo">更新当前用户的店铺信息</el-button>
 <!--        <el-button type="danger" @click="testToHello">店铺登陆</el-button>-->
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：如店铺信息显示不全，请点击左侧 -> 更新当前用户店铺信息按钮</span>
@@ -19,11 +20,11 @@
       >
         <el-table-column
           label="首图"
-          width="90"
+          width="75"
           align="center"
         >
           <template slot-scope="scope">
-            <img width="60px" height="60px" :src="scope.row.logo">
+            <img width="50px" height="50px" :src="scope.row.logo">
           </template>
         </el-table-column>
         <el-table-column
@@ -71,33 +72,32 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="上架"
-          width="80"
+          label="在售中"
+          width="75"
           align="center"
         >
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.onSaleCount }}</span>
+            <span>{{ scope.row.onSaleCount }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="下架"
-          width="80"
+          label="已下架"
+          width="75"
           align="center"
         >
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.offSaleCount }}</span>
+            <span>{{ scope.row.offSaleCount }}</span>
           </template>
         </el-table-column>
-<!--        <el-table-column-->
-<!--          label="操作"-->
-<!--          width="120"-->
-<!--          align="center"-->
-<!--        >-->
-<!--          <template slot-scope="scope">-->
-<!--            <el-button size="small" round type="danger"  @click="payMall(scope.row)">点击支付</el-button>-->
-<!--&lt;!&ndash;            <span style="margin-left: 10px">{{ scope.row.offSaleCount }}</span>&ndash;&gt;-->
-<!--          </template>-->
-<!--        </el-table-column>-->
+        <el-table-column
+          label="备注"
+          width="75"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.remark }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-dialog
@@ -133,7 +133,8 @@ export default {
       currentPage: 1,
       pageSize: 1,
       pageTotal: 1,
-      qrUrl: ''
+      qrUrl: '',
+      updateNotifyInstance: {}
     }
   },
   mounted() {
@@ -144,55 +145,62 @@ export default {
     init() {
       this.loadingText = '数据列表加载中...'
       this.tableLoading = true
-      this.$request({
-        url: 'pinduoduo-mall-info/mall-list',
-        method: 'get'
-      }).then(res => {
-        this.mallList = res
-      }).finally(() => {
-        this.tableLoading = false
-      })
+      if (this.$global.showMallInfo !== undefined) {
+        this.$global.showMallInfo.close()
+      }
+      if (window.showNeedUpdateMallInfo === undefined) {
+        window.showNeedUpdateMallInfo = this.showNeedUpdateMallInfo
+      }
+      if (window.showNeedErrorMallInfo === undefined) {
+        window.showNeedErrorMallInfo = this.showNeedErrorMallInfo
+      }
+      this.updateMallInfo()
+      // this.$request({
+      //   url: '/user-access-token/list-by-user',
+      //   method: 'get'
+      // }).then(res => {
+      //   console.log(res)
+      //   var list = window.mallInfo.getMallInfoList(JSON.stringify(res))
+      //   this.mallList = JSON.parse(list)
+      // }).finally(() => {
+      //   this.tableLoading = false
+      // })
     },
-    submitAuth() {
-      // window.open('http://127.0.0.1:7008/user-access-token/index')
-      window.open('http://htpdd.pjzbz.cn/api/user-access-token/index')
+    submitAuth: function() {
+      if (this.$store.getters.userInfo) {
+        var info = JSON.parse(this.$store.getters.userInfo)
+      }
+      window.mallInfo.openAuthUrl(info.id)
+      // window.location.href = 'http://127.0.0.1:7008/user-access-token/index'
+      // window.open('http://htpdd.pjzbz.cn/api/user-access-token/index')
       // window.location.href = ('http://127.0.0.1:7008/user-access-token/index')
     },
     updateMallInfo() {
       this.loadingText = '更新店铺信息中...'
       this.tableLoading = true
-      this.$request({
-        url: 'pinduoduo-mall-info/mall-info',
-        method: 'put'
-      }).then(res => {
-        this.$message({
-          message: '更新店铺信息成功！',
-          type: 'success'
+      var that = this
+      // mallInfo
+      this.$axios.all([this.getKey(), this.getList()])
+        .then(this.$axios.spread(function(keyStr, mallListSTr) {
+          var list = window.mallInfo.getMallInfoAndSave(JSON.stringify(keyStr), JSON.stringify(mallListSTr))
+          that.mallList = JSON.parse(list)
+          that.$notify.closeAll()
+          that.$global.completeOnOffSaleShowNotify.close()
+        })).finally(() => {
+          that.tableLoading = false
         })
-        this.init()
-      }).finally(() => {
-        this.tableLoading = false
+    },
+    getList() {
+      return this.$request({
+        url: '/user-access-token/list-by-user',
+        method: 'get'
       })
     },
-    /**
-     * 点击支付，生成一个图片二维码
-     * @param item
-     */
-    payMall(item) {
-      this.tableLoading = true
-      this.$request({
-        url: '/order-pay/new',
-        method: 'post',
-        params: {
-          mall: item
-        }
-      }).then((res) => {
-        this.qrUrl = res
-        this.dialogVisible = true
-      }).finally(() => {
-        this.tableLoading = false
+    getKey() {
+      return this.$request({
+        url: '/user-access-token/key',
+        method: 'post'
       })
-      // this.dialogVisible = true
     },
     /**
      * 关闭对话框
@@ -200,6 +208,30 @@ export default {
      */
     handleClose(done) {
       this.dialogVisible = false
+    },
+    showNeedErrorMallInfo(msg) {
+      this.$notify({
+        type: 'error',
+        title: '系统提示',
+        message: msg,
+        showClose: true,
+        duration: 0,
+        position: 'bottom-right'
+      })
+    },
+    showNeedUpdateMallInfo(msg) {
+      this.$global.showMallInfo = this.$notify({
+        type: 'warning',
+        title: '系统警告',
+        message: msg,
+        showClose: false,
+        duration: 0,
+        position: 'bottom-right'
+      })
+    },
+    // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+    tabToHome() {
+      this.$router.push({ path: '/welcome' })
     }
   }
 }

@@ -7,7 +7,8 @@ const state = {
   token: getToken(),
   name: '',
   avatar: '',
-  roles: []
+  roles: [],
+  userInfo: ''
 }
 
 const mutations = {
@@ -22,10 +23,18 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_INFO: (state, userInfo) => {
+    state.userInfo = userInfo
   }
 }
 
 const actions = {
+  test({ commit }, userInfo) {
+    return new Promise((resolve, reject) => {
+      commit('SET_NAME', userInfo)
+    })
+  },
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
@@ -67,6 +76,7 @@ const actions = {
         commit('SET_ROLES', roles)
         commit('SET_NAME', username)
         commit('SET_AVATAR', userRole.roleNote)
+        commit('SET_INFO', JSON.stringify(response))
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -78,9 +88,11 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
+        commit('SET_NAME', '')
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         commit('SET_ROLES', [])
+        commit('SET_INFO', '')
         removeToken()
         resetRouter()
         resolve()

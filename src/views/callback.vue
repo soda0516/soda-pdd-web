@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
-    <el-steps v-if="showSuccess" :space="200" :active=step finish-status="success">
-      <el-step title="用户请求授权"></el-step>
-      <el-step title="确认授权"></el-step>
-      <el-step title="拼多多颁发秘钥"></el-step>
-      <el-step title="后台更新秘钥"></el-step>
-      <el-step title="关闭回调页面"></el-step>
+    <el-steps v-if="showSuccess" :space="200" :active="step" finish-status="success">
+      <el-step title="用户请求授权" />
+      <el-step title="确认授权" />
+      <el-step title="拼多多颁发秘钥" />
+      <el-step title="后台更新秘钥" />
+      <el-step title="关闭回调页面" />
     </el-steps>
-    <el-steps v-show="showError" :space="200" :active=step finish-status="success">
-      <el-step title="用户请求授权"></el-step>
-      <el-step title="授权过程异常"></el-step>
-      <el-step title="关闭回调页面"></el-step>
+    <el-steps v-show="showError" :space="200" :active="step" finish-status="success">
+      <el-step title="用户请求授权" />
+      <el-step title="授权过程异常" />
+      <el-step title="关闭回调页面" />
     </el-steps>
   </div>
 </template>
@@ -37,31 +37,38 @@ export default {
   // },
   mounted() {
     const code = this.$utils.getUrlKey('code')
+    const state = this.$utils.getUrlKey('state')
     console.log('回调页面')
     console.log(code)
+    console.log(state)
     const hasToken = getToken()
     var that = this
     if (code) {
       console.log('显示当前的token')
       console.log(hasToken)
-      if (hasToken) {
-        this.getAuthReload(that, code)
+      if (state > 0) {
+        this.getAuthReload(that, code, state)
       } else {
-        this.getAuth(that, code)
+        this.getAuth(that, code, state)
       }
+      // if (hasToken) {
+      //   this.getAuthReload(that, code, state)
+      // } else {
+      //   this.getAuth(that, code, state)
+      // }
     }
   },
   methods: {
-    getAuth(that, code) {
+    getAuth(that, code, state) {
+      console.log('进入获取授权的方法')
       that.$request({
         method: 'get',
-        url: 'user-access-token/code',
+        url: 'user-access-token/code-state-generate',
         params: {
-          code: code
+          code: code,
+          state: state
         }
       }).then((userInfoForLogin) => {
-        console.log('进入获取授权的方法')
-        console.log(userInfoForLogin)
         that.showSuccess = true
         that.showError = false
         const time = window.setInterval(function() {
@@ -88,17 +95,20 @@ export default {
         }, 300)
       })
     },
-    getAuthReload(that, code) {
+    getAuthReload(that, code, state) {
       console.log('reload方法里面')
       that.$request({
         method: 'get',
-        url: 'user-access-token/code/reload',
+        url: 'user-access-token/code-state-add',
         params: {
-          code: code
+          code: code,
+          state: state
         }
-      }).then(() => {
+      }).then((userInfoForLogin) => {
         that.showSuccess = true
         that.showError = false
+        window.localStorage.setItem('username', userInfoForLogin.username)
+        window.localStorage.setItem('password', userInfoForLogin.password)
         const time = window.setInterval(function() {
           that.step = that.step + 1
           if (that.step >= 6) {

@@ -7,8 +7,9 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://htpdd.pjzbz.cn/api/',
+  baseURL: 'https://www.dckeji.tech/api/',
   // baseURL: 'http://127.0.0.1:7008/',
+  // baseURL: 'http://47.94.253.233/',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 50000 // request timeout
 })
@@ -80,7 +81,7 @@ service.interceptors.response.use(
         })
       } else if (res.code === 60000 || res.code === 60001) {
         Message({
-          message: res.message || 'Error',
+          message: res.data || '未知警告',
           type: 'warning',
           duration: 5 * 1000
         })
@@ -89,7 +90,7 @@ service.interceptors.response.use(
         这块是未授权错误，需要弹回到登录界面
          */
         Message({
-          message: res.message || 'Error',
+          message: res.message || '未知错误',
           type: 'error',
           duration: 5 * 1000
         })
