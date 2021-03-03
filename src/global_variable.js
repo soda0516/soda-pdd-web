@@ -1,5 +1,6 @@
+
 const baseURL = 'https://www.dckeji.tech/api/'
-// const baseURL = 'http://127.0.0.1:7006/'
+// const baseURL = 'http://127.0.0.1:10351/'
 // const redirectUrl = 'http://www.dckeji.tech/callback'
 // const baseURL = 'http://127.0.0.1:7006/'
 const token = '123456'
@@ -10,8 +11,11 @@ const currentProject = ''
 const authList = []
 const currentTaskStatus = 0
 const currentTaskWanchengdu = 0
-const showMallInfo = {}
 const completeOnOffSaleShowNotifyList = []
+const showTootip = true
+const version = 1.2
+const noShowVersion = true
+const showMsg = true
 
 export default {
   baseURL,
@@ -23,7 +27,10 @@ export default {
   authList,
   currentTaskStatus,
   currentTaskWanchengdu,
-  completeOnOffSaleShowNotifyList
+  completeOnOffSaleShowNotifyList,
+  showTootip,
+  version,
+  noShowVersion
   // showMallInfo,
   // completeOnOffSaleShowNotify
 }

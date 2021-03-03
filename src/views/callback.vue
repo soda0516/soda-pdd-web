@@ -36,27 +36,25 @@ export default {
   //   }
   // },
   mounted() {
-    const code = this.$utils.getUrlKey('code')
-    const state = this.$utils.getUrlKey('state')
+    // const code = this.$utils.getUrlKey('code')
+    // const state = this.$utils.getUrlKey('state')
     console.log('回调页面')
-    console.log(code)
-    console.log(state)
-    const hasToken = getToken()
-    var that = this
-    if (code) {
-      console.log('显示当前的token')
-      console.log(hasToken)
-      if (state > 0) {
-        this.getAuthReload(that, code, state)
-      } else {
-        this.getAuth(that, code, state)
-      }
-      // if (hasToken) {
-      //   this.getAuthReload(that, code, state)
-      // } else {
-      //   this.getAuth(that, code, state)
-      // }
-    }
+    // const hasToken = getToken()
+    // var that = this
+    // if (code) {
+    //   console.log('显示当前的token')
+    //   console.log(hasToken)
+    //   if (state > 0) {
+    //     this.getAuthReload(that, code, state)
+    //   } else {
+    //     this.getAuth(that, code, state)
+    //   }
+    //   // if (hasToken) {
+    //   //   this.getAuthReload(that, code, state)
+    //   // } else {
+    //   //   this.getAuth(that, code, state)
+    //   // }
+    // }
   },
   methods: {
     getAuth(that, code, state) {

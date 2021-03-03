@@ -5,7 +5,6 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import LayoutHome from '@/layout-home'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -35,127 +34,90 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
-  },
-  {
-    path: '/hello',
-    name: 'Hello',
-    component: () => import('@/views/hello'),
-    hidden: true
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
+    hidden: false
   },
   {
     path: '/',
     component: Layout,
     redirect: function() {
-      // if (window.client === undefined || window.client !== 1) {
-      //   console.log('window.client === undefined || window.client !== 1')
-      //   return '/welcome'
-      // } else {
-      //   console.log('aaaaaaaaaawindow.client === undefined || window.client !== 1')
-      //   return '/dashboard'
-      // }
-      return '/dashboard'
+      return '/mall'
     },
-    children: [{
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '大橙助手', icon: 'dashboard' }
-    },
-    {
-      path: '/callback',
-      name: 'Callback',
-      component: () => import('@/views/callback.vue'),
-      hidden: true,
-      meta: { title: '授权回调', icon: 'form' }
-    }
+    children: [
+      {
+        path: '/callback',
+        name: 'Callback',
+        component: () => import('@/views/callback.vue'),
+        hidden: true,
+        meta: { title: '授权回调', icon: 'form' }
+      }
     ]
   },
   {
     path: '/mall',
     component: Layout,
+    redirect: '/mall-operation',
     children: [
       {
         path: '/mall-operation',
         name: 'MallOperation',
         component: () => import('@/views/goods/mall-operation.vue'),
-        meta: { title: '店铺管理', icon: 'form' }
+        meta: { title: '绑定店铺信息', icon: 'form' }
       }]
   },
   {
-    path: '/on-off-sale',
+    path: '/goods-item',
     component: Layout,
     // redirect: '/goods/mall-operation',
     name: 'Data',
     meta: { title: '商品管理', icon: 'example' },
     children: [
       {
-        path: '/fast-on-off-sale',
-        name: 'FastOnOffSale',
-        component: () => import('@/views/goods/fast/fast-on-off-sale.vue'),
-        meta: { title: '急速上下架', icon: 'form' }
-      },
-      {
-        path: '/circle-on-off-sale',
-        name: 'CircleOnOffSale',
-        component: () => import('@/views/goods/circle/circle-on-off-sale.vue'),
-        meta: { title: '循环上下架', icon: 'form' }
-      }
-      // {
-      //   path: '/scheduler-on-off-sale',
-      //   name: 'SchedulerOnOffSale',
-      //   component: () => import('@/views/goods/scheduler/scheduler-on-off-sale.vue'),
-      //   meta: { title: '定时上下架', icon: 'form' }
-      // }
-    ]
-  },
-  {
-    path: '/goods',
-    component: Layout,
-    meta: { title: '商品清除', icon: 'example' },
-    children: [
-      {
-        path: '/offsale-clean',
-        name: 'OffsaleClean',
-        component: () => import('@/views/goods/offsale-clean/offsale-clean.vue'),
-        meta: { title: '下架品清理', icon: 'form' }
-      },
-      {
-        path: '/draft-clean',
-        name: 'DraftClean',
-        component: () => import('@/views/goods/draft-clean/draft-clean.vue'),
-        meta: { title: '草稿箱管理', icon: 'form' }
-      },
-      {
-        path: '/no-order-clean',
-        name: 'noOrderClean',
-        component: () => import('@/views/order/no-order-clean.vue'),
-        meta: { title: '无流量清理', icon: 'form' }
+        path: '/detail-fast-on-off-sale',
+        name: 'DetailFastOnOffSale',
+        component: () => import('@/views/goods/fast/detail-fast-on-off-sale.vue'),
+        meta: { title: '上下架及删除', icon: 'form' }
       }
     ]
   },
   {
     path: '/copy',
     component: Layout,
-    meta: { title: '商品复制', icon: 'example' },
+    meta: { title: '搬家上货', icon: 'example' },
     children: [
       {
-        path: '/taobao-pinduoduo-goods-copy',
-        name: 'TaobaoPinduoduoGoodsCopy',
-        component: () => import('@/views/copy/taobao-pinduoduo-goods-copy.vue'),
-        meta: { title: '淘宝上货', icon: 'form' }
+        path: '/taobao-upload',
+        name: 'TaobaoUpload',
+        component: () => import('@/views/copy/taobao-upload.vue'),
+        meta: { title: '商品搬家上货', icon: 'form' }
       }
-      // {
-      //   path: '/forbidden-word-manage',
-      //   name: 'ForbiddenWordManage',
-      //   component: () => import('@/views/copy/forbidden-word-manage.vue'),
-      //   meta: { title: '禁词管理', icon: 'form' }
-      // }
+    ]
+  },
+  {
+    path: '/record',
+    component: Layout,
+    meta: { title: '搬家上货', icon: 'example' },
+    children: [
+      {
+        path: '/taobao-collect',
+        name: 'TaobaoCollectVue',
+        component: () => import('@/views/copy/taobao-collect.vue'),
+        meta: { title: '商品搬家记录', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/on-off-sale',
+    component: Layout,
+    // redirect: '/goods/mall-operation',
+    name: 'Data',
+    meta: { title: '草稿管理', icon: 'example' },
+    children: [
+      {
+        path: '/draft-clean',
+        name: 'DraftClean',
+        component: () => import('@/views/goods/draft-clean/draft-clean.vue'),
+        meta: { title: '草稿查询清理', icon: 'form' }
+      }
     ]
   },
   {
@@ -167,20 +129,8 @@ export const constantRoutes = [
         path: '/account-modify',
         name: 'AccountModify',
         component: () => import('@/views/system/account-modify.vue'),
-        meta: { title: '账户修改', icon: 'form' }
+        meta: { title: '登录信息修改', icon: 'form' }
       }
-      // {
-      //   path: '/mall-delete',
-      //   name: 'MallDelete',
-      //   component: () => import('@/views/system/mall-delete.vue'),
-      //   meta: { title: '店铺删除', icon: 'form' }
-      // },
-      // {
-      //   path: '/mall-delete',
-      //   name: 'MallDelete',
-      //   component: () => import('@/views/system/mall-delete.vue'),
-      //   meta: { title: '任务日志', icon: 'form' }
-      // }
     ]
   },
   {
@@ -192,57 +142,24 @@ export const constantRoutes = [
         path: '/contact-us',
         name: 'ContactUs',
         component: () => import('@/views/contact/contact-us.vue'),
-        meta: { title: '客服信息', icon: 'form' }
+        meta: { title: '技术客服信息', icon: 'form' }
       }
     ]
   },
   {
-    path: '/home',
-    // meta: { title: '联系我们', icon: 'example' },
-    // hidden: true,
-    component: LayoutHome,
-    children: [
-      {
-        path: '/welcome',
-        name: 'Welcome',
-        component: () => import('@/views/home.vue')
-        // meta: { title: '客服信息', icon: 'form' }
-      }
-    ]
-  }
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
   // 404 page must be placed at the end !!!
-  // { path: '*', redirect: '/404', hidden: true }
-]
-export const asyncRoutes = [
-  {
-    path: '/crawler',
-    component: Layout,
-    // redirect: '/crawler/cookie-setting',
-    alwaysShow: true, // will always show the root menu
-    name: 'Crawler',
-    meta: {
-      title: '采集设置',
-      icon: 'nested',
-      roles: ['ROLE_ADMIN'],
-      noCache: true
-    },
-    children: [
-      {
-        path: '/cookie-setting',
-        name: 'CookieSetting',
-        component: () => import('@/views/system/crawler/cookie_setting.vue'), // Parent router-view
-        meta: { title: 'COOKIE', roles: ['ROLE_ADMIN'], icon: 'form', noCache: true }
-      }
-    ]
-  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   mode: 'history', // require service support
-  base: './',
+  base: '/',
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes, asyncRoutes
+  routes: constantRoutes
 })
 
 const router = createRouter()

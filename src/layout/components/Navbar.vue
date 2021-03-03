@@ -7,17 +7,17 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <p style="vertical-align: center" class="user-avatar">当前用户:{{ this.$store.getters.name }}</p>
+          <p style="vertical-align: center" class="user-avatar">用户：{{ this.username }} （退出）</p>
           <i class="el-icon-caret-bottom user-avatar"></i>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item>
-              首页
-            </el-dropdown-item>
-          </router-link>
+<!--          <router-link to="/">-->
+<!--            <el-dropdown-item>-->
+<!--              切到首页-->
+<!--            </el-dropdown-item>-->
+<!--          </router-link>-->
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">注销</span>
+            <span style="display:block;" @click="logout">返回登录/授权页面</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -29,6 +29,8 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+// eslint-disable-next-line no-unused-vars
+import { getUsername } from '../../utils/auth'
 // eslint-disable-next-line no-unused-vars
 import { removeToken, setToken } from '../../utils/auth'
 
@@ -43,7 +45,14 @@ export default {
       'avatar'
     ])
   },
+  data() {
+    return {
+      username: '未知'
+    }
+  },
   mounted() {
+    console.log(getUsername())
+    this.username = getUsername()
   },
   methods: {
     toggleSideBar() {
@@ -51,9 +60,10 @@ export default {
     },
     // async
     async logout() {
+      console.log('logout')
       // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      await this.$store.dispatch('user/clearInfo')
+      this.$router.push('/login')
     }
   }
 }

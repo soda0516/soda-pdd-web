@@ -1,22 +1,21 @@
 <template>
   <div class="app-container">
-    <el-col :span="6">
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="QQ号">
-          <el-link type="primary">{{form.name}}</el-link>
-<!--          <el-input v-model="form.name"></el-input>-->
-        </el-form-item>
-        <el-form-item label="说明">
-          <label>(如果软件使用过程中出现问题，或者对软件本身有何改进意见，请添加技术人员QQ号咨询)</label>
-<!--          <el-select v-model="form.region" placeholder="请选择活动区域">-->
-<!--            <el-image-->
-<!--              style="width: 191px; height: 228px"-->
-<!--              :src="url"-->
-<!--              :fit="fit"></el-image>-->
-<!--          </el-select>-->
-        </el-form-item>
-      </el-form>
-    </el-col>
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <span>欢迎使用鲸品上货助手，使用过程中如有任何问题，请与我们联系:</span>
+        <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+      </div>
+      <div class="text item">
+        <el-form ref="form" :model="form" label-width="100px" size="small">
+          <el-form-item label="邮箱地址：">
+            <span>66640005@qq.com</span>
+          </el-form-item>
+          <el-form-item label="手机号码：">
+            <span>15928152295</span>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-card>
   </div>
 </template>
 

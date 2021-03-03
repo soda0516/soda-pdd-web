@@ -7,14 +7,13 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // baseURL: 'http://47.94.253.233/api',
   // baseURL: 'http://pddapi.nihaoapp.cn/',
-  baseURL: 'http://jpsh.nihaoapp.cn/douding/api',
-  // http://jpsh.nihaoapp.cn
+  // baseURL: 'http://47.94.253.233/api',
+  baseURL: 'http://jpsh.nihaoapp.cn/0516/api',
   // baseURL: 'http://127.0.0.1:10351/',
   // baseURL: 'http://100.65.130.57:10351/',
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 30000 // request timeout
+  timeout: 280000 // request timeout
 })
 
 // request interceptor
@@ -64,13 +63,14 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    console.log(res)
+    console.log(response)
     const res = response.data
     // if the custom code is not 20000, it is judged as an error.
     if (response.headers['content-type'] === 'application/octet-stream') {
       return res
     }
-    if (res.code !== 1) {
+    console.log(res)
+    if (res.code !== 20000) {
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === -2) {
         Message({

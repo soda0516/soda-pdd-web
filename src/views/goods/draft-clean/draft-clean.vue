@@ -1,93 +1,111 @@
 <template>
-  <div class="app-container">
-    <div
-      v-loading="tableLoading"
-      class="app-container"
-      :element-loading-text="loadingText"
-      element-loading-spinner="el-icon-loading"
-    >
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="草稿状态">
-          <el-select v-model="optionValue" placeholder="请选择草稿状态">
-            <el-option
-              v-for="item in checkStatusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="分页页码">
-          <el-input-number v-model="currentPageNumber" :max="100" :step="1" size="small" step-strictly></el-input-number>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="warning"  @click="searchDraft">查询草稿箱</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="danger"  @click="cleanDraft">清理商品</el-button>
-        </el-form-item>
-        <el-form-item>
-          <span>默认页码为1，同时最多只能显示30条草稿箱数据</span>
-        </el-form-item>
-      </el-form>
-      <el-row :gutter="24">
-        <el-col :span="11"><div class="grid-content bg-purple">
-          <el-divider content-position="left">
-            请选择一个店铺，并设置上下架的请求数量
-          </el-divider>
-          <mall-list-part @childRequestMallInfo="selectMallChange"/>
-        </div></el-col>
-        <el-col :span="13"><div class="grid-content bg-purple">
-          <el-divider content-position="left">
-            草稿箱列表
-          </el-divider>
-          <el-table
-            ref="multipleTable"
-            :data="draftGoodsList"
-            border
-            style="width: 100%"
-            cell-style="font-size: 12px"
-            fit
-            max-height="550"
-            @selection-change="handleSelectionChangeGoodsList">
-            <el-table-column
-              type="selection"
-              width="40"
-            />
-            <el-table-column
-              label="商品编号"
-              align="center"
-              width="115">
-              <template slot-scope="scope">
-                <span>{{ scope.row.goodsId }}</span>
-<!--                <el-progress type="circle" width="60" :percentage="wanchengdu"></el-progress>-->
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="商品名称"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>{{ scope.row.goodsName }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="驳回原因">
-              <template slot-scope="scope">
-                <span>{{ scope.row.rejectComment }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div></el-col>
-      </el-row>
-    </div>
+  <div
+    v-loading="tableLoading"
+    class="app-container"
+    :element-loading-text="loadingText"
+    element-loading-spinner="el-icon-loading"
+  >
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="绑定店铺信息:">
+        <span>{{ selectedMallName }}</span>
+<!--        <el-select v-model="selectedMall" placeholder="绑定店铺信息" disabled>-->
+<!--          <el-option-->
+<!--            v-for="item in mallList"-->
+<!--            :key="item.id"-->
+<!--            :label="item.mall_name"-->
+<!--            :value="item.id"-->
+<!--          />-->
+<!--        </el-select>-->
+      </el-form-item>
+      <el-form-item>
+        <div/>
+      </el-form-item>
+      <el-form-item label="草稿状态">
+        <el-select v-model="optionValue" placeholder="请选择草稿状态" @change="draftChange">
+          <el-option
+            v-for="item in checkStatusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="warning"
+          @click="searchDraft"
+        >显示商品草稿</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="danger"
+          :disabled="removeDisabled"
+          @click="removeDraft"
+        >清理选中商品</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row :gutter="24">
+      <el-table
+        ref="multipleTable"
+        :data="draftGoodsList"
+        border
+        style="width: 100%"
+        @selection-change="handleSelectionChangeGoodsList"
+      >
+        <el-table-column type="selection" width="60" align="center" />
+        <el-table-column
+          label="商品ID"
+          align="center"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+            <!--                <el-progress type="circle" width="60" :percentage="wanchengdu"></el-progress>-->
+          </template>
+        </el-table-column>
+        <el-table-column label="商品名称" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="check_status"
+          label="草稿状态"
+          width="120"
+          :formatter="formatterStatus"
+          align="center"
+        />
+        <el-table-column
+          prop="check_status"
+          label="是否新增"
+          width="80"
+          :formatter="formatterShop"
+          align="center"
+        />
+        <el-table-column prop="submit_time" label="提交时间" width="220" :formatter="formatDateSubmitTime" align="center" />
+        <el-table-column prop="checked_time" label="审核时间" width="220" :formatter="formatDateCheckTime" align="center" />
+        <el-table-column label="驳回原因" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.reject_comment }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :page-size="pageSize"
+        :current-page="currentPage"
+        layout="prev, pager, next"
+        :total="pageTotal"
+        style="margin-top: 15px;text-align: right"
+        @current-change="handleCurrentChange"
+      />
+    </el-row>
   </div>
 </template>
 <script>
-import MallListPart from '../../../components/view/mall-list-part'
+import { getToken } from '../../../utils/auth'
 export default {
   name: 'FastOnOffSale',
-  components: { MallListPart },
   data() {
     return {
       loadingText: '数据列表加载中',
@@ -95,7 +113,7 @@ export default {
       buttonLoading: false,
       pageNumber: 10,
       currentPage: 1,
-      pageSize: 1,
+      pageSize: 16,
       pageTotal: 1,
       formInline: {
         user: '',
@@ -106,11 +124,13 @@ export default {
       requestMallList: [],
       requestSale: [],
       mallList: [],
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        testValue: ''
-      }],
+      tableData: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          testValue: ''
+        }
+      ],
       requestNumber: 0,
       nofify: {},
       // 0:编辑中,1:审核中,2:审核通过,3:审核驳回
@@ -138,158 +158,35 @@ export default {
        */
       currentPageNumber: 1,
       multipleSelection: [],
-      draftGoodsList: []
+      draftGoodsList: [],
+      selectedMall: '',
+      removeDisabled: false,
+      selectedMallName: ''
     }
   },
   mounted() {
-    this.init()
+    this.initMallInfo()
   },
   methods: {
-    init() {
-      this.loadingText = '数据列表加载中...'
+    initMallInfo() {
       this.tableLoading = true
-      if (this.$global.showMallInfo !== undefined) {
-        this.$global.showMallInfo.close()
-      }
-      // if (window.showNeedUpdateMallInfo === undefined) {
-      //   window.showNeedUpdateMallInfo = this.showNeedUpdateMallInfo
-      // }
-      // if (window.fastOnOffSaleFromJava === undefined) {
-      //   window.fastOnOffSaleFromJava = this.callBackOnOffSaleFromJava
-      // }
-      if (window.draftCleanFromJava === undefined) {
-        window.draftCleanFromJava = this.draftCleanFromJavaNofity
-      }
       this.$request({
-        url: '/user-access-token/list-by-user',
-        method: 'get'
+        url: '/local/shop/list?token=' + getToken(),
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }).then(res => {
-        // alert(this.$global.showMallInfo)
+        this.mallList = res.d
+        if (this.mallList.length > 0) {
+          this.selectedMall = this.mallList[0].id
+          this.selectedMallName = this.mallList[0].mall_name
+        }
         console.log(res)
-        var list = window.mallInfo.getMallInfoList(JSON.stringify(res))
-        this.mallList = JSON.parse(list)
+        // alert(this.$global.showMallInfo)
       }).finally(() => {
         this.tableLoading = false
       })
-    },
-    addSale(item) {
-      // 先构建一个临时的mallList储存，用来提交时候构建
-      if (event.target.checked) {
-        this.requestMallList.push(item)
-      } else {
-        var index = this.requestMallList.indexOf(item)
-        this.requestMallList.splice(index, 1)
-      }
-    },
-    handlerOnSale(index, item) {
-      // {"id":900,"accessToken":null,"saleType":1,"requestCount":300,"userId":null,"createTime":null,"modifyTime":null}
-      // 运行之前先清空
-      if (this.requestMallList.length <= 0) {
-        this.$message({
-          message: '请至少选中一个店铺',
-          type: 'warning'
-        })
-      } else {
-        this.requestSale.length = 0
-        for (let i = 0; i < this.requestMallList.length; i++) {
-          var sale = { mallId: this.requestMallList[i].id, saleType: 1, requestCount: this.requestMallList[i].offSaleCount, userId: this.requestMallList[i].userId }
-          this.requestSale.push(sale)
-        }
-        this.requestFaskTask.fastMallCount = this.requestMallList.length
-        this.requestFaskTask.taskList = this.requestSale
-      }
-      this.loadingText = '一键上架中...'
-      this.tableLoading = true
-      this.$request({
-        url: 'pinduoduo-fast-on-off-sale-task/new',
-        method: 'post',
-        params: {
-          task: this.requestFaskTask
-        }
-      }).then(res => {
-        this.$message({
-          message: '成功开启急速上架任务',
-          type: 'success'
-        })
-        // eslint-disable-next-line no-empty
-        if (res) {
-        } else {
-          this.init()
-        }
-      }).finally(() => {
-        this.tableLoading = false
-      })
-    },
-    setupOnSaleTask() {
-      /*
-      如果是空的，提示用户选择一个店铺
-       */
-      if (JSON.stringify(this.requestTask) === '{}') {
-        this.$message({
-          message: '没有选择店铺哦，请选择一个店铺，并设置请求数量',
-          type: 'warning'
-        })
-        return
-      }
-      this.loadingText = '一键上架中...'
-      this.tableLoading = true
-      this.$request({
-        url: '/user-access-token/mallInfo',
-        method: 'post',
-        params: {
-          mallInfo: JSON.stringify(this.requestTask)
-        }
-      }).then(res => {
-        window.fastOnOffSale.fastOnOffSale(JSON.stringify(res), 1, this.requestNumber)
-        // alert(JSON.stringify(res))
-      }).finally(() => {
-        this.tableLoading = false
-      })
-      // window.fastOnOffSale.runFromJs()
-    },
-    setupOffSaleTask() {
-      /*
-      如果是空的，提示用户选择一个店铺
-       */
-      if (JSON.stringify(this.requestTask) === '{}') {
-        this.$message({
-          message: '没有选择店铺哦，请选择一个店铺，并设置请求数量',
-          type: 'warning'
-        })
-        return
-      }
-      this.loadingText = '一键下架中...'
-      this.tableLoading = true
-      this.$request({
-        url: '/user-access-token/mallInfo',
-        method: 'post',
-        params: {
-          mallInfo: JSON.stringify(this.requestTask)
-        }
-      }).then(res => {
-        window.fastOnOffSale.fastOnOffSale(JSON.stringify(res), 0, this.requestNumber)
-        // alert(JSON.stringify(res))
-      }).finally(() => {
-        this.tableLoading = false
-      })
-      // window.fastOnOffSale.runFromJs()
-    },
-    callBackOnOffSaleFromJava(item) {
-      var json = JSON.parse(item)
-      var successRequestCount = json.successRequestCount
-      var totalRequestCount = json.totalRequestCount
-      json.process = parseInt(parseFloat(successRequestCount / totalRequestCount) * 100)
-      this.$store.dispatch('task/setOnOffSaleTask', json)
-      if (json.currentStatus >= 2) {
-        this.notify = this.$notify({
-          type: 'success',
-          title: '系统提示',
-          message: '店铺：' + this.$store.getters.currentOnOffSaleTask.mallName + '。' + this.$store.getters.currentOnOffSaleTask.operateType + '：' + this.$store.getters.currentOnOffSaleTask.successRequestCount + '，' + '请更新店铺信息，查看最新商品状态！',
-          showClose: false,
-          duration: 0,
-          position: 'bottom-right'
-        })
-      }
     },
     /*
     radio选中一个店铺的信息
@@ -298,89 +195,105 @@ export default {
       this.requestTask = item
       this.requestNumber = item.totalCount
     },
-    /*
-    后台判断是否跟服务端的店铺信息一致
-     */
-    showNeedUpdateMallInfo(msg) {
-      this.$global.showMallInfo = this.$notify({
-        type: 'warning',
-        title: '系统提示',
-        message: msg,
-        showClose: false,
-        duration: 0,
-        position: 'bottom-right'
-      })
-    },
     handleSelectionChangeGoodsList(val) {
       this.multipleSelection = val
     },
-    searchDraft: function() {
-      /*
-      如果是空的，提示用户选择一个店铺
-      */
-      if (JSON.stringify(this.requestTask) === '{}') {
-        this.$message({
-          message: '没有选择店铺哦，请选择一个店铺，并设置请求数量',
-          type: 'warning'
-        })
-        return
-      }
-      this.loadingText = '数据加载中...'
+    searchDraft() {
+      this.currentPage = 1
+      this.pageDraft()
+    },
+    pageDraft: function() {
+      console.log(this.selectedMall)
       this.tableLoading = true
       this.$request({
-        url: '/user-access-token/mallInfo',
-        method: 'post',
+        url: '/goods/draft?token=' + getToken(),
+        method: 'GET',
         params: {
-          mallInfo: JSON.stringify(this.requestTask)
+          id: this.selectedMall,
+          check_status: this.optionValue,
+          page: this.currentPage,
+          page_size: this.pageSize
         }
       }).then(res => {
-        var val = window.draftClean.list30Draft(JSON.stringify(res), this.currentPageNumber, this.optionValue)
-        this.draftGoodsList = JSON.parse(val).data
+        console.log(res)
+        this.draftGoodsList = res.d.goods_commit_list_get_response.list
+        this.pageTotal = res.d.goods_commit_list_get_response.total
       }).finally(() => {
         this.tableLoading = false
       })
     },
-    cleanDraft() {
-      var list = JSON.stringify(this.multipleSelection)
-      /*
-      如果是空的，提示用户选择一个店铺
-      */
-      if (JSON.stringify(this.requestTask) === '{}') {
-        this.$message({
-          message: '没有选择店铺哦，请选择一个店铺，并设置请求数量',
-          type: 'warning'
-        })
-        return
+    async removeDraft() {
+      console.log(this.multipleSelection)
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        await this.removeOneDraft(this.multipleSelection[i].goods_id)
       }
-      this.loadingText = '数据加载中...'
+      await this.pageDraft()
+      // await this.removeOneDraft()
+    },
+    async removeOneDraft(goods_commit_id) {
       this.tableLoading = true
-      this.$request({
-        url: '/user-access-token/mallInfo',
-        method: 'post',
+      await this.$request({
+        url: '/goods/deletedraft?token=' + getToken(),
+        method: 'GET',
         params: {
-          mallInfo: JSON.stringify(this.requestTask)
+          id: this.selectedMall,
+          goods_commit_id: goods_commit_id
         }
       }).then(res => {
-        var val = window.draftClean.cleanDraft(JSON.stringify(res), list)
-        this.draftGoodsList = JSON.parse(val).data
+        console.log(res)
+        this.draftGoodsList = res.d.goods_commit_list_get_response.list
+        this.pageTotal = res.d.goods_commit_list_get_response.total
       }).finally(() => {
         this.tableLoading = false
       })
     },
-    selectMallChange(mall) {
-      this.requestTask = mall
+    draftChange(value) {
+      if (value === 2) {
+        this.removeDisabled = true
+      } else {
+        this.removeDisabled = false
+      }
     },
-    draftCleanFromJavaNofity(msg) {
-      this.$notify({
-        type: 'warning',
-        title: '系统提示',
-        message: msg,
-        position: 'bottom-right'
-      })
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.pageDraft()
+    },
+    formatterStatus(row, col) {
+      for (let i = 0; i < this.checkStatusOptions.length; i++) {
+        if (this.checkStatusOptions[i].value === row.check_status) {
+          return this.checkStatusOptions[i].label
+        }
+      }
+    },
+    formatterShop(row, col) {
+      if (row.is_shop > 0) {
+        return '修改'
+      } else {
+        return '新增'
+      }
+    },
+    formatDateSubmitTime(row, column) {
+      // 获取单元格数据
+      const data = row.submit_time
+      if (data == null) {
+        return null
+      }
+      var dt = new Date(data * 1000)
+      return dt.getFullYear() + '年' + (dt.getMonth() + 1) + '月' + dt.getDate() + '日' + dt.getHours() + '时' + dt.getMinutes() + '分' + dt.getSeconds() + '秒'
+      // + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
+    },
+    formatDateCheckTime(row, column) {
+      // 获取单元格数据
+      const data = row.checked_time
+      if (data == null) {
+        return null
+      }
+      var dt = new Date(data * 1000)
+      console.log(dt)
+      return dt.getFullYear() + '年' + (dt.getMonth() + 1) + '月' + dt.getDate() + '日' + dt.getHours() + '时' + dt.getMinutes() + '分' + dt.getSeconds() + '秒'
     }
   }
 }
 </script>
 <style scoped>
-
 </style>

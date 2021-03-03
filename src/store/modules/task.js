@@ -28,20 +28,34 @@ const state = {
     totalRequestCount: 0,
     successRequestCount: 0,
     logModelList: [
-      {
-        id: 0,
-        mallId: 0,
-        mallName: '',
-        errorText: '',
-        remark: '',
-        goodsId: 0,
-        goodsName: '',
-        operateType: ''
-      }
+      // {
+      //   id: 0,
+      //   mallId: 0,
+      //   mallName: '',
+      //   errorText: '',
+      //   remark: '',
+      //   goodsId: 0,
+      //   goodsName: '',
+      //   operateType: ''
+      // }
     ]
   },
   noflowGoodsListAll: [],
-  currentNoflowGoodsListPage: []
+  currentNoflowGoodsListPage: [],
+  uploadLog: '',
+  collectGoodsLog: {
+    breakInt: false,
+    itemList: []
+  },
+  deadStockGoodsInOrderList: {
+    selectMall: {},
+    oneLoading: 0,
+    twoLoading: 0,
+    threeLoading: 0,
+    orderGoodsList: [],
+    goodsFilter: {},
+    goodsList: []
+  }
   // token: getToken(),
   // name: '',
   // avatar: '',
@@ -71,6 +85,24 @@ const mutations = {
   },
   SET_DELETEGOODS: (state, deleteGoodsTask) => {
     state.deleteGoodsTask = deleteGoodsTask
+  },
+  SET_UPLOADLOG: (state, uploadLog) => {
+    state.uploadLog = state.uploadLog + uploadLog + '\n'
+  },
+  CLEAN_UPLOADLOG: (state, uploadLog) => {
+    state.uploadLog = ''
+  },
+  SET_COLLECTGOODSLOG: (state, collectGoodsLog) => {
+    state.collectGoodsLog = collectGoodsLog
+  },
+  INIT_COLLECTGOODSLOG: (state, collectGoodsLog) => {
+    state.collectGoodsLog = {
+      breakInt: 0,
+      itemList: []
+    }
+  },
+  SET_DEADSTOCKGOODSINORDERLIST: (state, deadStockGoodsInOrderList) => {
+    state.deadStockGoodsInOrderList = deadStockGoodsInOrderList
   }
   // SET_ERRORLOGS: (state, logs) = {
   //   state.logs = logs
@@ -122,6 +154,32 @@ const actions = {
   setDeleteGoods({ commit }, status) {
     return new Promise((resolve, reject) => {
       commit('SET_DELETEGOODS', status)
+    })
+  },
+  setUploadLog({ commit }, status) {
+    return new Promise((resolve, reject) => {
+      commit('SET_UPLOADLOG', status)
+    })
+  },
+  cleanUploadLog({ commit }, status) {
+    return new Promise((resolve, reject) => {
+      commit('CLEAN_UPLOADLOG', status)
+    })
+  },
+  // SET_COLLECTGOODSLOG
+  setCollectGoodsLog({ commit }, status) {
+    return new Promise((resolve, reject) => {
+      commit('SET_COLLECTGOODSLOG', status)
+    })
+  },
+  initCollectGoodsLog({ commit }, status) {
+    return new Promise((resolve, reject) => {
+      commit('INIT_COLLECTGOODSLOG', status)
+    })
+  },
+  setDeadStockGoodsInOrderList({ commit }, status) {
+    return new Promise((resolve, reject) => {
+      commit('SET_DEADSTOCKGOODSINORDERLIST', status)
     })
   }
   // SET_CIRCLEONOFFSALETASK

@@ -1,6 +1,6 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout } from '@/api/user'
 // eslint-disable-next-line no-unused-vars
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,setUsername } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const state = {
@@ -49,38 +49,21 @@ const actions = {
       })
     })
   },
-
-  // get user info
-  getInfo({ commit, state }) {
+  clearInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getInfo(getToken()).then(response => {
-        // console.log(response)
-        // const { data } = response.data
-        // const { data } = response
-        // console.log('getInfo')
-        // console.log(data)
-
-        if (!response) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { username } = response
-        const { userRole } = response
-        const roles = []
-        roles.push(userRole.roleName)
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
-        // console.log('userRole')
-        // console.log(roles)
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', username)
-        commit('SET_AVATAR', userRole.roleNote)
-        commit('SET_INFO', JSON.stringify(response))
-        resolve(response)
-      }).catch(error => {
-        reject(error)
-      })
+      console.log('clearInfo')
+      setToken('')
+      setUsername('')
+      removeToken()
+      resetRouter()
+      resolve()
+    })
+  },
+  // get user info
+  getInfo({ commit }, username) {
+    return new Promise((resolve, reject) => {
+      console.log('getInfo' + username)
+      commit('SET_NAME', username)
     })
   },
 
@@ -114,6 +97,7 @@ const actions = {
 
 export default {
   namespaced: true,
+  name,
   state,
   mutations,
   actions

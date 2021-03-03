@@ -7,6 +7,7 @@
       :data="mallList"
       style="width: 100%"
       :border="true"
+      size="small"
     >
       <el-table-column
         label="选择"

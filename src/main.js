@@ -13,10 +13,12 @@ import App from './App'
 import store from './store'
 import router from './router'
 import request from './utils/request'
+import requestDc from './utils/request-dc'
 import utils from './utils/index'
 import axios from 'axios'
-// import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-import VueI18n from 'vue-i18n'
+import VueCookies from 'vue-cookies'
+import VueIntro from 'vue-introjs'
+import 'intro.js/introjs.css'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -33,9 +35,10 @@ import { mockXHR } from '../mock'
 if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
-
+Vue.use(VueCookies)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+Vue.use(VueIntro)
 // Vue.use(ElementUI, { zhLocale })
 // Vue.use(new VueSocketIO({
 //   debug: true,
@@ -59,6 +62,7 @@ Vue.use(ElementUI, { locale })
 //   i18n: (key, value) => i18n.t(key, value) // 重点！！在注册Element时设置i18n的处理方法（这里有个小坑）
 // })
 Vue.prototype.$request = request
+Vue.prototype.$requestDc = requestDc
 Vue.prototype.$axios = axios
 Vue.prototype.$utils = utils
 Vue.prototype.$global = Global

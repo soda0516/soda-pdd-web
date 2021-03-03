@@ -1,4 +1,4 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -42,7 +42,7 @@ const state = {
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
-    state.routes = constantRoutes.concat(routes)
+    state.routes = constantRoutes
     // state.routes = constantRoutes
   }
 }
@@ -52,14 +52,14 @@ const actions = {
     return new Promise(resolve => {
       console.log('generateRoutes')
       console.log(roles)
-      let accessedRoutes
-      if (roles.includes('ROLE_ADMIN')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      // let accessedRoutes
+      // if (roles.includes('ROLE_ADMIN')) {
+      //   accessedRoutes = asyncRoutes || []
+      // } else {
+      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      // }
+      // commit('SET_ROUTES', accessedRoutes)
+      resolve('accessedRoutes')
     })
   }
 }

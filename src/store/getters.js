@@ -15,7 +15,11 @@ const getters = {
   currentCircleOnOffSaleTask: state => state.task.circleOnOffSaleTask,
   currentDeleteGoodsTask: state => state.task.deleteGoodsTask,
   noflowGoodsList: state => state.task.noflowGoodsListAll,
-  currentNoflowGoodsList: state => state.task.currentNoflowGoodsListPage
+  currentNoflowGoodsList: state => state.task.currentNoflowGoodsListPage,
+  uploadLog: state => state.task.uploadLog,
+  collectGoodsLog: state => state.task.collectGoodsLog,
+  deadStockGoodsInOrderList: state => state.task.deadStockGoodsInOrderList,
+  deadStockGoodsList: state => state.task.deadStockGoodsList
 }
 export default getters
 // status: '',
